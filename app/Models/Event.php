@@ -11,8 +11,15 @@ class Event extends Model
 
 	public static function getallEventWorkShops(){
 		$events = new Event;
-
-		return $events->with("workshops")->get();
+		return $events->with(["workshops"])->get();
+	}
+	public static function getFutureEventsWorkshops(){
+		$events = new Event;
+		return $events->whereHas("workshops", function($query) {
+			return $query->where('start','>',date('Y-m-d H:i:s'));
+		})->with(["workshops" => function($query) {
+			return $query->where('start','>',date('Y-m-d H:i:s'));
+		}])->get();
 	}
 
 	public function workshops() {
